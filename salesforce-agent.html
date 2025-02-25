@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Salesforce Agent</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/all.min.css" />
+    <link rel="stylesheet" href="./css/df-messenger-default.css">
+    <script src="./scripts/df-messenger.js"></script>
+    <script src="./scripts/jquery-3.5.1.slim.min.js"></script>
+    <script src="./scripts/popper.min.js"></script>
+    <script src="./scripts/bootstrap.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            transition: background-color 0.3s ease; /* Smooth transition for background color */
+        }
+
+        body.dark-mode {
+            background-color: #1e1e1e; /* Dark background color */
+            color: #ffffff; /* Light text color */
+        }
+
+        .main-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        #chat-container {
+            flex-grow: 1;
+            overflow-y: scroll;
+            background-color: #f8f9fa;
+        }
+
+        body.dark-mode #chat-container {
+            background-color: #333; /* Darker chat container background */
+            color: #fff;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 70%;
+            clear: both;
+        }
+
+        .message.user {
+            background-color: #dcf8c6;
+            float: right;
+        }
+
+        body.dark-mode .message.user {
+            background-color: #4CAF50; /* Darker green for user in dark mode */
+            color:#fff;
+        }
+
+        .message.bot {
+            background-color: #ffffff;
+            float: left;
+        }
+        body.dark-mode .message.bot {
+            background-color: #555; /* Darker white for bot in dark mode */
+            color:#fff;
+        }
+
+        #message-input-area {
+            background-color: #fff;
+            padding: 15px;
+            border-top: 1px solid #ced4da;
+        }
+         body.dark-mode #message-input-area {
+            background-color: #444; /* Darker input area background */
+            border-top: 1px solid #666; /* Slightly lighter border in dark mode */
+        }
+
+        #message-input {
+            border-radius: 20px;
+            padding-left: 15px;
+        }
+
+        body.dark-mode #message-input {
+            background-color: #555; /* Darker input background */
+            color: #fff; /* Light text color in input */
+            border: 1px solid #777; /* Slightly darker border */
+        }
+
+        #send-button {
+            border-radius: 20px;
+            margin-left: 5px;
+        }
+
+        .chat-sidebar {
+            width: 15vw;
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+            transition: width 0.3s ease; /* Smooth transition for sidebar width */
+        }
+
+        body.dark-mode .chat-sidebar {
+            background-color: #333;
+            border-right: 1px solid #555;
+            color:#fff;
+        }
+        .chat-sidebar.collapsed {
+            width: 5vw; /* Hide the sidebar */
+            overflow: hidden; /* Prevent content from overflowing */
+        }
+
+        .chat-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-sidebar p {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        body.dark-mode .chat-sidebar p {
+            background-color: #444;
+            color:#fff;
+            box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1); /* Lighter shadow in dark mode */
+        }
+
+        .chat-sidebar p:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+         body.dark-mode .chat-sidebar p:hover {
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.15); /* Lighter shadow in dark mode */
+        }
+
+        .chat-sidebar p.active {
+            background-color: #e0f2f7;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+        body.dark-mode .chat-sidebar p.active {
+            background-color: #555;
+        }
+
+        df-messenger {
+            z-index: 999;
+            position: fixed;
+            --df-messenger-primary-color:#fcf5f3;
+            --df-messenger-titlebar-background: #fcf5f3;
+            --df-messenger-titlebar-font-color:#000;
+            --df-messenger-font-color: #000;
+            --df-messenger-font-family: Google Sans;
+            --df-messenger-chat-background: #fcf5f3;
+            --df-messenger-message-user-background: #d3e3fd;
+            --df-messenger-message-bot-background: #fff;
+            --df-messenger-message-bot-actor-background: rgba(0, 0, 0, 0);
+            --df-messenger-message-user-actor-background: rgba(0, 0, 0, 0);
+            --df-messenger-message-actor-image-size: 40px;
+            --df-messenger-message-actor-spacing: 5px;
+            --df-messenger-send-icon-color:#0b57d0;
+            --df-messenger-send-icon-color-hover:#0b57d0;
+            --df-messenger-send-icon-color-active:#0b57d0;
+            --df-messenger-input-font-color:#000;
+            --df-messenger-input-background:#fff;
+            --df-messenger-input-padding: 1% 25% 1% 25%;
+            --df-messenger-input-border-top:1px solid #e0e0e0;
+            bottom: 0px;
+            right: 0px;
+            width: 85vw;
+            height: 100vh;
+        }
+        body.dark-mode df-messenger {
+            --df-messenger-primary-color:#333;
+            --df-messenger-titlebar-background: #333;
+            --df-messenger-input-background:#333;
+            --df-messenger-chat-background: #333; /* Darker chat background */
+            --df-messenger-message-user-background: #4CAF50; /* Darker user message background */
+            --df-messenger-message-bot-background: #555; /* Darker bot message background */
+            --df-messenger-font-color: #fff; /* Light font color */
+            --df-messenger-titlebar-font-color:#fff;
+            --df-messenger-send-icon-color:#fff;
+            --df-messenger-send-icon-color-hover:#fff;
+            --df-messenger-send-icon-color-active:#fff;
+            --df-messenger-send-icon-color-disabled:#ffffffad;
+            --df-messenger-input-font-color:#000;
+        }
+        
+        .chat-content.expanded df-messenger {
+            width: 95vw;
+       }
+        /* Style for the toggle button */
+        #dark-mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px; /* Adjust as needed */
+            color: #333; /* Initial color (light mode) */
+            z-index: 9999;
+        }
+        body.dark-mode #dark-mode-toggle {
+            color: #fff; /* Color in dark mode */
+            background-color: #000;
+        }
+        .sidebar-content.hide{
+            display: none;
+        }
+        /* Style for the sidebar toggle button */
+        #sidebar-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px; /* Adjust as needed */
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px; /* Adjust as needed */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="chat-sidebar">
+            <div class="row">
+                <div class="col-8 sidebar-content">
+                    <img width="100%" height="100%" src="bot-wave.png">
+                </div>
+                <div class="col-4">
+                    <button id="sidebar-toggle">
+                        <i class="fas fa-bars"></i> </button>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-12 sidebar-content">
+                <!-- <p class="active">First Conversation</p>
+                <p>Second Conversation</p>
+                <p>Third Conversation</p> -->
+                </div>
+                
+            
+        </div>
+        <div class="chat-content">
+            <button id="dark-mode-toggle">
+                <i class="fa-solid fa-moon"></i></button>
+            
+           
+            
+            <df-messenger
+            project-id="noted-sandbox-449310-j5"
+            agent-id="f8e1c6fc-81c0-499c-89c9-a07406f969e5"
+            language-code="en"
+            max-query-length="-1"
+            
+            >
+            <!-- 
+             project-id="splendid-myth-449608-c6"
+            agent-id="fb55fe39-b3c7-428b-ba40-5efb967979f3"
+            -->
+            <!--
+            location="us-central1"
+            project-id="noted-sandbox-449310-j5"
+             old -> f8e1c6fc-81c0-499c-89c9-a07406f969e5 
+            new -> 5ac388c2-e260-4092-8f60-4541b22d8293
+             -->
+            <df-messenger-chat
+            chat-title="Atrium's First AI Agent"  
+            bot-writing-text="Just a sec..."
+            bot-actor-image="bot-chat.png"
+            user-actor-image="user-chat.png"
+            >
+            </df-messenger-chat>
+            </df-messenger>
+            <!-- <div id="chat-container">
+
+                
+            </div>
+            <div id="message-input-area">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="message-input" placeholder="Type your message...">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" id="send-button">Send</button>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+
+   
+    <script>
+        
+        const dfMessenger = $('df-messenger-chat');
+        let chatBubble
+        $(document).ready(function () {
+            // Sidebar toggle
+            $('#sidebar-toggle').click(function () {
+                $('.chat-sidebar').toggleClass('collapsed');
+                $('.chat-content').toggleClass('expanded'); // Add a class to adjust content width
+                $('.sidebar-content').toggleClass('hide'); // Add a class to adjust content width
+
+            });
+            // Dark mode toggle
+            const body = $('body');
+            const darkModeToggle = $('#dark-mode-toggle');
+
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.addClass('dark-mode');
+                $("i.fas").addClass('text-light');
+                dfMessenger.attr("user-actor-image","user-chat-dark.png");
+                darkModeToggle.find('i').removeClass('fa-moon').addClass('fa-sun'); // Corrected icon toggle
+               
+            }
+
+            darkModeToggle.click(function () {
+                body.toggleClass('dark-mode');
+                $("i.fas").toggleClass('text-light');
+                dfMessenger.attr("user-actor-image","user-chat.png");
+
+                $(this).find('i').toggleClass('fa-moon fa-sun'); // Corrected icon toggle
+
+                // Save theme preference to localStorage
+                if (body.hasClass('dark-mode')) {
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    localStorage.setItem('theme', 'light');
+                }
+                
+                window.location.reload();
+            });
+
+            // Add click event to paragraphs in the sidebar
+            $('.chat-sidebar p').click(function () {
+                // Remove active class from all paragraphs
+                $('.chat-sidebar p').removeClass('active');
+
+                // Add active class to the clicked paragraph
+                $(this).addClass('active');
+
+                // You can add more logic here to load the selected conversation, etc.
+                console.log("Clicked on:", $(this).text());
+            });
+            window.addEventListener('df-messenger-loaded', () => {
+                console.log("df-messenger-loaded");
+            });
+            window.addEventListener('df-messenger-error', function (event) {
+                console.log("df-messenger-error");
+                console.log(event);
+
+            });
+            window.addEventListener('df-request-sent', function (event) {
+                console.log("df-request-sent");
+                console.log(event);
+
+            });
+            window.addEventListener('df-response-received', function (event) {
+                console.log("df-response-received");
+                console.log(event);
+
+            });
+            window.addEventListener('df-user-input-entered', function (event) {
+                console.log("df-user-input-entered");
+                console.log(event);
+
+            });
+        });
+   
+    </script>
+   
+
+</body>
+
+</html>
