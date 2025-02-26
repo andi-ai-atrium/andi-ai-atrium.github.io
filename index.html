@@ -193,6 +193,9 @@
             --df-messenger-send-icon-color-active:#fff;
             --df-messenger-send-icon-color-disabled:#ffffffad;
             --df-messenger-input-font-color:#000;
+            --df-messenger-input-border-top:1px solid #333;
+            --df-messenger-titlebar-border-bottom: 1px solid #333;
+            --df-messenger-chat-border:#111111;
         }
         
         .chat-content.expanded df-messenger {
@@ -235,15 +238,19 @@
         <div class="chat-sidebar">
             <div class="row">
                 <div class="col-9 sidebar-content">
-                    <img width="100%" height="100%" src="bot-wave.png">
+                    
                 </div>
                 <div class="col-3">
                     <button id="sidebar-toggle">
                         <i class="fas fa-bars"></i> </button>
                 </div>
+
             </div>
-            <div class="row mt-5">
+
+            <div class="row mt-10" style="height: 100%;align-content: center;">
                 <div class="col-12 sidebar-content">
+                    <img width="100%" height="100%" src="bot-wave.png">
+                    <center><b>Hi, I'm Andi</b></center>
                 <!-- <p class="active">First Conversation</p>
                 <p>Second Conversation</p>
                 <p>Third Conversation</p> -->
@@ -276,7 +283,7 @@
             new -> 5ac388c2-e260-4092-8f60-4541b22d8293
              -->
             <df-messenger-chat
-            chat-title="Atrium's First AI Agent"  
+            chat-title=""  
             bot-writing-text="Just a sec..."
             bot-actor-image="bot-chat.png"
             user-actor-image="user-chat.png"
