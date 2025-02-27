@@ -1,0 +1,53 @@
+
+- Main Feature
+    - Security (UI | Agent)
+        - User Specific converation
+        - Access (User Or AgentUser(andi.ai@atrium.ai))
+            - for JIRA
+            - for Salesforce
+            - for Git
+    - Common Features (Agents).
+        - Self training.
+        - Chaining (LangChain) (optional)
+        - communciate based on api response with agents or tools.
+            - Error Handling if query is not relevant or incomplete.
+                - Any dependent parameter missing should be asked again
+        - provide response based on the final data.
+        - Access to File (Bucket|Drive|link) | File upload (Single | Bulk)
+        - logs the changes done (Accurately).
+    - JIRA AGENT ( UI | API CALLs | Agent)
+        - JIRA API ACCESS
+            - fetch data
+                - Read Story Description in NL
+                - Read Comments and understand the final context
+                - Read Files attached in the Jira Story
+            - push data (new ticket or bug)
+                - .
+                - .
+                - .
+                - update(partial or full update tickets)
+                - Update Status of Jira Story
+                - Communicate Via Comments
+                - Story Change / Comment Addition / ??  What all Trigger Agent to pick up story
+
+    - SALESFORCE AGENT ( UI | AGENT | API CALLs )
+        - SALESFORCE API ACCESS
+            - Org Access.(User Or AgentUser(integration user))
+            - web services (optional)
+            - operations (SOAP API | REST API)
+                - object related task
+                    - configuration
+                        - validation
+                        - page layout
+                        - tab and app
+                    - create new object
+                    - create/update fields
+- Research Items
+    - Instructions (improvement)
+    - Calling the conversation agent through APIs. 
+    - data set creation and training ( for auto picking the function of agent). 
+    - Self training.
+        - Chat history or transcript for context.
+    - Chaining (LangChain) (optional)
+    - Dispatching
+    - logs the changes done (Accurately)
