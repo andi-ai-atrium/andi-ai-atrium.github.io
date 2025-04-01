@@ -7,273 +7,63 @@
     <title>Chat App</title>
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/all.min.css" />
-    <link rel="stylesheet" href="./css/df-messenger-default.css">
-    <script src="./scripts/df-messenger.js"></script>
+    <link rel="stylesheet" href="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css">
+    
+    <link rel="stylesheet" href="./css/custom-chat.css" />
+    
+    <script src="https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js"></script>
+
+    <!-- <link rel="stylesheet" href="./css/df-messenger-default.css">
+    <script src="./scripts/df-messenger.js"></script> -->
     <script src="./scripts/jquery-3.5.1.slim.min.js"></script>
     <script src="./scripts/popper.min.js"></script>
     <script src="./scripts/bootstrap.min.js"></script>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            margin: 0;
-            transition: background-color 0.3s ease; /* Smooth transition for background color */
-        }
-
-        body.dark-mode {
-            background-color: #1e1e1e; /* Dark background color */
-            color: #ffffff; /* Light text color */
-        }
-
-        .main-container {
-            display: flex;
-            height: 100vh;
-        }
-
-        #chat-container {
-            flex-grow: 1;
-            overflow-y: scroll;
-            background-color: #f8f9fa;
-        }
-
-        body.dark-mode #chat-container {
-            background-color: #333; /* Darker chat container background */
-            color: #fff;
-        }
-
-        .message {
-            margin-bottom: 10px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            max-width: 70%;
-            clear: both;
-        }
-
-        .message.user {
-            background-color: #dcf8c6;
-            float: right;
-        }
-
-        body.dark-mode .message.user {
-            background-color: #4CAF50; /* Darker green for user in dark mode */
-            color:#fff;
-        }
-
-        .message.bot {
-            background-color: #ffffff;
-            float: left;
-        }
-        body.dark-mode .message.bot {
-            background-color: #555; /* Darker white for bot in dark mode */
-            color:#fff;
-        }
-
-        #message-input-area {
-            background-color: #fff;
-            padding: 15px;
-            border-top: 1px solid #ced4da;
-        }
-         body.dark-mode #message-input-area {
-            background-color: #444; /* Darker input area background */
-            border-top: 1px solid #666; /* Slightly lighter border in dark mode */
-        }
-
-        #message-input {
-            border-radius: 20px;
-            padding-left: 15px;
-        }
-
-        body.dark-mode #message-input {
-            background-color: #555; /* Darker input background */
-            color: #fff; /* Light text color in input */
-            border: 1px solid #777; /* Slightly darker border */
-        }
-
-        #send-button {
-            border-radius: 20px;
-            margin-left: 5px;
-        }
-
-        .chat-sidebar {
-            width: 15vw;
-            background-color: #f0f0f0;
-            padding: 20px;
-            border-right: 1px solid #ddd;
-            overflow-y: auto;
-            transition: width 0.3s ease; /* Smooth transition for sidebar width */
-        }
-
-        body.dark-mode .chat-sidebar {
-            background-color: #333;
-            border-right: 1px solid #555;
-            color:#fff;
-        }
-        .chat-sidebar.collapsed {
-            width: 5vw; /* Hide the sidebar */
-            overflow: hidden; /* Prevent content from overflowing */
-        }
-
-        .chat-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-sidebar p {
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        body.dark-mode .chat-sidebar p {
-            background-color: #444;
-            color:#fff;
-            box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1); /* Lighter shadow in dark mode */
-        }
-
-        .chat-sidebar p:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-         body.dark-mode .chat-sidebar p:hover {
-            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.15); /* Lighter shadow in dark mode */
-        }
-
-        .chat-sidebar p.active {
-            background-color: #e0f2f7;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-        }
-        body.dark-mode .chat-sidebar p.active {
-            background-color: #555;
-        }
-
-        df-messenger {
-            z-index: 999;
-            position: fixed;
-            --df-messenger-primary-color:#fcf5f3;
-            --df-messenger-titlebar-background: #fcf5f3;
-            --df-messenger-titlebar-font-color:#000;
-            --df-messenger-font-color: #000;
-            --df-messenger-font-family: Google Sans;
-            --df-messenger-chat-background: #fcf5f3;
-            --df-messenger-message-user-background: #d3e3fd;
-            --df-messenger-message-bot-background: #fff;
-            --df-messenger-message-bot-actor-background: rgba(0, 0, 0, 0);
-            --df-messenger-message-user-actor-background: rgba(0, 0, 0, 0);
-            --df-messenger-message-actor-image-size: 40px;
-            --df-messenger-message-actor-spacing: 5px;
-            --df-messenger-send-icon-color:#0b57d0;
-            --df-messenger-send-icon-color-hover:#0b57d0;
-            --df-messenger-send-icon-color-active:#0b57d0;
-            --df-messenger-input-font-color:#000;
-            --df-messenger-input-background:#fff;
-            --df-messenger-input-padding: 1% 25% 1% 25%;
-            --df-messenger-input-border-top:1px solid #e0e0e0;
-            bottom: 0px;
-            right: 0px;
-            width: 85vw;
-            height: 100vh;
-        }
-        body.dark-mode df-messenger {
-            --df-messenger-primary-color:#333;
-            --df-messenger-titlebar-background: #333;
-            --df-messenger-input-background:#333;
-            --df-messenger-chat-background: #333; /* Darker chat background */
-            --df-messenger-message-user-background: #4CAF50; /* Darker user message background */
-            --df-messenger-message-bot-background: #555; /* Darker bot message background */
-            --df-messenger-font-color: #fff; /* Light font color */
-            --df-messenger-titlebar-font-color:#fff;
-            --df-messenger-send-icon-color:#fff;
-            --df-messenger-send-icon-color-hover:#fff;
-            --df-messenger-send-icon-color-active:#fff;
-            --df-messenger-send-icon-color-disabled:#ffffffad;
-            --df-messenger-input-font-color:#000;
-            --df-messenger-input-border-top:1px solid #333;
-            --df-messenger-titlebar-border-bottom: 1px solid #333;
-            --df-messenger-chat-border:#111111;
-        }
-        
-        .chat-content.expanded df-messenger {
-            width: 95vw;
-       }
-        /* Style for the toggle button */
-        #dark-mode-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 20px; /* Adjust as needed */
-            color: #333; /* Initial color (light mode) */
-            z-index: 9999;
-        }
-        body.dark-mode #dark-mode-toggle {
-            color: #fff; /* Color in dark mode */
-            background-color: #000;
-        }
-        .sidebar-content.hide{
-            display: none;
-        }
-        /* Style for the sidebar toggle button */
-        #sidebar-toggle {
-            position: absolute;
-            top: 20px;
-            left: 20px; /* Adjust as needed */
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 20px; /* Adjust as needed */
-        }
-    </style>
+    
 </head>
 
 <body>
     <div class="main-container">
         <div class="chat-sidebar">
             <div class="row">
-                <div class="col-9 sidebar-content">
-                    
-                </div>
-                <div class="col-3">
+                <div class="col-12">
                     <button id="sidebar-toggle">
-                        <i class="fas fa-bars"></i> </button>
+                        <i class="fas fa-bars"></i>
+                    </button>
                 </div>
-
             </div>
-
             <div class="row mt-10" style="height: 100%;align-content: center;">
                 <div class="col-12 sidebar-content">
-                    <img width="100%" height="100%" src="bot-wave.png">
-                    <center><b>Hi, I'm Andi</b></center>
-                <!-- <p class="active">First Conversation</p>
-                <p>Second Conversation</p>
-                <p>Third Conversation</p> -->
+                    <img width="100%" height="90%" src="./bot-wave.png">
+                    <center><b>Hi, I'm Andi</b><br><span>(QA Agent)</span></center>
                 </div>
-                
-            
+            </div>
+           
         </div>
         <div class="chat-content">
-            <button id="dark-mode-toggle">
-                <i class="fa-solid fa-moon"></i></button>
+            <div id="chat-header">
+                <button id="reset-btn">
+                    <i class="fa-solid fa-arrow-rotate-right"></i>
+                </button>
+                <button title="Toggle dark mode" id="dark-mode-toggle">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
             
            
             
             <df-messenger
-             
-            project-id="splendid-myth-449608-c6"
-            agent-id="fb55fe39-b3c7-428b-ba40-5efb967979f3"
+            location="asia-south1"
+            project-id="deployment-testing-452907"
+            agent-id="38828661-6e3d-4fb3-97ed-19dbd03f9fb3"
             language-code="en"
-            max-query-length="-1"
+            max-query-length="-1" >
 
-            
-            >
+            <!-- date 05-03-2025 
+             project-id="splendid-myth-449608-c6"
+            agent-id="fb55fe39-b3c7-428b-ba40-5efb967979f3" 
+            -->
             <!-- 
+
              project-id="splendid-myth-449608-c6"
             agent-id="fb55fe39-b3c7-428b-ba40-5efb967979f3"
             -->
@@ -303,13 +93,40 @@
                     </div>
                 </div>
             </div> -->
+            <!-- Button trigger modal -->
+<!-- Button trigger modal -->
+<!-- <button type="button" > -->
+  <!-- </button> -->
+  
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Understood</button>
+        </div>
+      </div>
+    </div>
+  </div>
         </div>
     </div>
 
 
    
     <script>
-        
+        if(localStorage.getItem('theme')==null){
+            localStorage.setItem('theme', 'dark');
+        }
         const dfMessenger = $('df-messenger-chat');
         let chatBubble
         $(document).ready(function () {
@@ -323,7 +140,7 @@
             // Dark mode toggle
             const body = $('body');
             const darkModeToggle = $('#dark-mode-toggle');
-
+            
             // Check for saved theme preference
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
@@ -350,7 +167,12 @@
                 
                 window.location.reload();
             });
-
+            $(document).on('click','#reset-btn',function () {
+                console.log('reset - btn')
+                const messenger = document.querySelector('df-messenger');
+    
+                messenger.startNewSession({ retainHistory: false });
+            });
             // Add click event to paragraphs in the sidebar
             $('.chat-sidebar p').click(function () {
                 // Remove active class from all paragraphs
@@ -362,9 +184,7 @@
                 // You can add more logic here to load the selected conversation, etc.
                 console.log("Clicked on:", $(this).text());
             });
-            window.addEventListener('df-messenger-loaded', () => {
-                console.log("df-messenger-loaded");
-            });
+           
             window.addEventListener('df-messenger-error', function (event) {
                 console.log("df-messenger-error");
                 console.log(event);
@@ -380,13 +200,31 @@
                 console.log(event);
 
             });
-            window.addEventListener('df-user-input-entered', function (event) {
-                console.log("df-user-input-entered");
-                console.log(event);
+            let count =0;
+            
+           
+            window.addEventListener('df-session-expired', () => {
+                const messenger = document.querySelector('df-messenger');
+                messenger.renderCustomText(`*Session expired*`, /* isBot= */ true);
+                messenger.startNewSession({ retainHistory: true });
+                console.log("df-session-expired");
+            });
+            window.addEventListener('df-session-ended', () => {
+                const messenger = document.querySelector('df-messenger');
+                messenger.renderCustomText(`*Session ended*`, /* isBot= */ true);
+                messenger.startNewSession({ retainHistory: true });
+                console.log("df-session-ended");
+
+            });
+            window.addEventListener('df-request-sent', (event) => {
+                console.log('Request', event.detail.data.requestBody);
+              
 
             });
         });
-   
+        window.addEventListener('df-messenger-loaded', () => {
+            console.log("df-messenger-loaded");
+        });
     </script>
    
 
